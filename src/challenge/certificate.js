@@ -1,6 +1,7 @@
 import { PALETTE } from '../world/palette.js';
 import { STRINGS } from '../content/strings.js';
 import { createCanvas, getCtx, drawText, roundRect, starPath } from '../ui3d/textCanvas.js';
+import { saveFile } from '../app/saveFile.js';
 
 export const CERT_W = 1600;
 export const CERT_H = 1131;
@@ -114,26 +115,16 @@ export function drawCertificate({ score, total, percent, name = '', aliPortrait 
   return c;
 }
 
-/** ينزّل الشهادة كصورة PNG (مع بديل عند منع التنزيل). */
-export function downloadCanvas(canvas, filename = 'ali-explorer-certificate.png') {
-  return new Promise((resolve) => {
+/** ينزّل الشهادة كصورة PNG. @returns {Promise<'saved'|'declined'|'failed'>} */
+export async function downloadCanvas(canvas, filename = 'ali-explorer-certificate.png') {
+  const blob = await new Promise((resolve) => {
     try {
-      canvas.toBlob((blob) => {
-        if (!blob) return resolve(false);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 4000);
-        resolve(true);
-      }, 'image/png');
+      canvas.toBlob(resolve, 'image/png');
     } catch {
-      resolve(false);
+      resolve(null);
     }
   });
+  return blob ? saveFile(filename, blob) : 'failed';
 }
 
 /** يطبع الشهادة في نافذة مستقلة. */

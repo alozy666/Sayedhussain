@@ -197,6 +197,8 @@ try {
   await csvDl.saveAs(csvPath);
   const csv = readFileSync(csvPath, 'utf8');
   check('ملف CSV بترميز UTF-8 مع BOM ويحتوي 4 محاولات', csv.charCodeAt(0) === 0xfeff && csv.trim().split(/\r?\n/).length === 5);
+  await page.click('#teacher-clear');
+  check('مسح السجل يطلب تأكيدًا داخل الصفحة', (await page.locator('#teacher-clear').textContent()).includes('تأكيد'));
   await page.keyboard.press('Escape');
 
   // ---------------------------------------------------------------- الخريطة والتنقل

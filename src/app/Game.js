@@ -659,8 +659,9 @@ export class Game {
       canvas: this.cert ?? this.renderCertificate(''),
       render: (name) => this.renderCertificate(name),
       onDownload: async (name) => {
-        const ok = await downloadCanvas(this.renderCertificate(name));
-        this.hud.toast(ok ? 'تم تنزيل الشهادة.' : 'تعذّر التنزيل في هذا المتصفح، جرّب زر الطباعة.');
+        const res = await downloadCanvas(this.renderCertificate(name));
+        if (res === 'saved') this.hud.toast('تم تنزيل الشهادة.');
+        else if (res === 'failed') this.hud.toast('تعذّر التنزيل هنا. انقر بزر الفأرة الأيمن على الشهادة واختر «حفظ الصورة باسم».');
       },
       onPrint: (name) => {
         if (!printCanvas(this.renderCertificate(name))) this.hud.toast('اسمح بالنوافذ المنبثقة لطباعة الشهادة.');

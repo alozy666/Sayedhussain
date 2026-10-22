@@ -1,19 +1,42 @@
 import { ICONS } from './icons.js';
+import { saveFile } from '../app/saveFile.js';
 import { CONCEPTS, CHALLENGE } from '../content/challenge.js';
 import { loadAttempts, clearAttempts, attemptsToCSV, conceptErrorCounts, confusionText, formatDate } from '../app/teacherStore.js';
 
+/** نص مفصول بعلامات الجدولة: يُلصق مباشرة في Excel أو Google Sheets. */
+function attemptsToTSV(attempts) {
+  return attemptsToCSV(attempts)
+    .replace(/^\uFEFF/, '')
+    .split('\r\n')
+    .map((line) => {
+      const cells = [];
+      let cur = '';
+      let q = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (q) {
+          if (ch === '"' && line[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else if (ch === '"') q = false;
+          else cur += ch;
+        } else if (ch === '"') q = true;
+        else if (ch === ',') {
+          cells.push(cur);
+          cur = '';
+        } else cur += ch;
+      }
+      cells.push(cur);
+      return cells.map((c) => c.replace(/\t/g, ' ')).join('\t');
+    })
+    .join('\n');
+}
+
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-function downloadText(text, filename, type) {
-  const blob = new Blob([text], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
+async function downloadText(text, filename, type, label) {
+  const res = await saveFile(filename, new Blob([text], { type }));
+  if (res === 'failed' && label) label.textContent = 'تعذّر التنزيل هنا — استخدم «نسخ النتائج»';
 }
 
 /** لوحة المعلم: نتيجة آخر محاولة، السجل، المفاهيم الخاطئة، الطباعة وCSV. */
@@ -94,18 +117,52 @@ export function openTeacherPanel(hud) {
       mk(
         `${ICONS.download}<span>تنزيل CSV</span>`,
         'btn-mint',
-        () => downloadText(attemptsToCSV(loadAttempts()), 'ali-explorer-results.csv', 'text/csv;charset=utf-8'),
+        (e) =>
+          downloadText(attemptsToCSV(loadAttempts()), 'ali-explorer-results.csv', 'text/csv;charset=utf-8', e.currentTarget.querySelector('span')),
         'teacher-csv'
+      ),
+      mk(
+        `${ICONS.copy}<span>نسخ النتائج</span>`,
+        '',
+        async (e) => {
+          const label = e.currentTarget.querySelector('span');
+          const text = attemptsToTSV(loadAttempts());
+          try {
+            await navigator.clipboard.writeText(text);
+            label.textContent = 'تم النسخ — الصقها في Excel';
+          } catch {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.cssText = 'position:fixed;opacity:0';
+            document.body.append(ta);
+            ta.select();
+            const ok = document.execCommand?.('copy');
+            ta.remove();
+            label.textContent = ok ? 'تم النسخ — الصقها في Excel' : 'تعذّر النسخ في هذا المتصفح';
+          }
+        },
+        'teacher-copy'
       ),
       mk(
         `${ICONS.trash}<span>مسح السجل</span>`,
         '',
-        () => {
-          if (window.confirm('هل تريد مسح جميع النتائج المحفوظة على هذا الجهاز؟')) {
-            clearAttempts();
-            hud.closeModal(true);
-            openTeacherPanel(hud);
+        (e) => {
+          // تأكيد داخل الصفحة: الضغطة الأولى تطلب التأكيد والثانية تمسح
+          const btn = e.currentTarget;
+          if (btn.dataset.armed !== '1') {
+            btn.dataset.armed = '1';
+            btn.querySelector('span').textContent = 'اضغط مرة أخرى لتأكيد المسح';
+            setTimeout(() => {
+              if (!btn.isConnected) return;
+              btn.dataset.armed = '';
+              btn.querySelector('span').textContent = 'مسح السجل';
+            }, 4000);
+            return;
           }
+          clearAttempts();
+          hud.closeModal(true);
+          openTeacherPanel(hud);
         },
         'teacher-clear'
       )

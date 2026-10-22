@@ -39,6 +39,10 @@ import { STATIONS } from './content/stations.js';
 import { PRACTICE } from './content/practice.js';
 import { STRINGS } from './content/strings.js';
 
+// الاتجاه من اليمين لليسار حتى لو عُرضت الصفحة داخل إطار يضيف هيكل HTML خاصًا به
+document.documentElement.lang = 'ar';
+document.documentElement.dir = 'rtl';
+
 const params = new URLSearchParams(location.search);
 
 // ------------------------------------------------------------ شاشة التحميل والأخطاء

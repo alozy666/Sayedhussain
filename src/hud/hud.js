@@ -338,6 +338,7 @@ export class HUD {
       el('button', { class: 'btn', type: 'button', onclick: () => onPrint(input.value) }, `${ICONS.print}<span>طباعة</span>`)
     );
     c.append(actions);
+    c.append(el('p', { class: 'note' }, 'إذا لم يبدأ التنزيل: انقر بزر الفأرة الأيمن على صورة الشهادة واختر «حفظ الصورة باسم».'));
     this.openModal(c, { title: STRINGS.certificateTitle });
   }
 }
