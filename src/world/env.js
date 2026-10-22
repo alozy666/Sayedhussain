@@ -116,7 +116,7 @@ export function createMountains() {
     const a = (i / count) * Math.PI * 2 + rand() * 0.15;
     const r = 180 + rand() * 50;
     const radius = 30 + rand() * 18;
-    const geo = blobGeometry(radius, { seed: 200 + i, detail: 3, jitter: 0.12, freq: 1.1 });
+    const geo = blobGeometry(radius, { seed: 200 + i, detail: 2, jitter: 0.12, freq: 1.1 });
     geo.scale(1, 0.55 + rand() * 0.35, 0.8);
     const [lo, hi] = colors[i % colors.length];
     paintGradient(geo, lo, hi, 0, radius * 0.9);

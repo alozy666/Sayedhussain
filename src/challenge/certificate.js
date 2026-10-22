@@ -78,8 +78,8 @@ export function drawCertificate({ score, total, percent, name = '', aliPortrait 
   drawText(ctx, 'المستكشف علي', px + pw / 2, py + ph + 52, { size: 44, weight: 800, color: PALETTE.navySoft });
 
   // النصوص (العمود الأيمن)
-  const cx = 1030;
-  drawText(ctx, STRINGS.certificateTitle, cx, 190, { size: 84, weight: 800, color: PALETTE.navy, maxWidth: 1040 });
+  const cx = 1010;
+  drawText(ctx, STRINGS.certificateTitle, cx, 190, { size: 76, weight: 800, color: PALETTE.navy, maxWidth: 900 });
   ctx.fillStyle = PALETTE.orange;
   roundRect(ctx, cx - 150, 262, 300, 14, 7);
   ctx.fill();

@@ -30,7 +30,7 @@ const LAYOUTS = {
     view: { pos: [1.4, 10.2, 20.0], target: [0.0, 3.6, -2.2], minDist: 9, maxDist: 28 },
     board: [8.2, 0, 1.6],
     ali: [3.6, 0, 6.6],
-    buttons: [-0.2, 1.4, 5.2],
+    buttons: [-5.4, 1.1, 5.6],
   },
   weathering: {},
   erosion: {

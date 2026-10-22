@@ -3,7 +3,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { PALETTE } from '../world/palette.js';
 import { uiMat } from '../world/materials.js';
 import { createCanvas, getCtx, canvasTexture, drawText, drawIcon, font, measure } from './textCanvas.js';
-import { onTick, animate } from '../engine/ticker.js';
+import { onTick, animate, wait } from '../engine/ticker.js';
 import { ease, damp } from '../engine/mathx.js';
 import { services } from '../engine/services.js';
 
@@ -54,13 +54,13 @@ export class Button3D extends THREE.Group {
     const w = this.widthU;
     const h = height;
     this.material = new THREE.MeshStandardMaterial({ color: this.color, roughness: 0.55, metalness: 0 });
-    this.body = new THREE.Mesh(new RoundedBoxGeometry(w, h, 0.34, 5, h * 0.48), this.material);
+    this.body = new THREE.Mesh(new RoundedBoxGeometry(w, h, 0.34, 3, h * 0.48), this.material);
     this.body.castShadow = true;
     this.add(this.body);
 
     const baseColor = this.color.clone().multiplyScalar(0.72);
     this.base = new THREE.Mesh(
-      new RoundedBoxGeometry(w + 0.1, h + 0.1, 0.24, 5, (h + 0.1) * 0.48),
+      new RoundedBoxGeometry(w + 0.1, h + 0.1, 0.24, 3, (h + 0.1) * 0.48),
       new THREE.MeshStandardMaterial({ color: baseColor, roughness: 0.7 })
     );
     this.base.position.set(0, -0.06, -0.12);
@@ -146,14 +146,17 @@ export class Button3D extends THREE.Group {
     this._hiding = false;
     this.visible = true;
     this.showScale = 0;
+    const token = (this._showToken = (this._showToken ?? 0) + 1);
     const run = () => {
+      if (token !== this._showToken || !this.visible) return;
       this._anim = animate(0.45, (p) => (this.showScale = ease.outBack(p)));
     };
-    if (delay > 0) setTimeout(run, delay * 1000);
+    if (delay > 0) wait(delay).then(run);
     else run();
   }
 
   hide(instant = false) {
+    this._showToken = (this._showToken ?? 0) + 1;
     this._anim?.cancel();
     if (instant || !this.visible) {
       this.visible = false;

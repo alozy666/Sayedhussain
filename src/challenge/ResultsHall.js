@@ -47,8 +47,9 @@ export class ResultsHall {
     return { pos: this.w(0, 5.2, 16.0), target: this.w(0, 2.8, 0), minDist: 7, maxDist: 22, azRange: 0.6 };
   }
 
-  aliSpot() {
-    return this.w(0.3, 0.45, 3.4);
+  /** مكان علي: بين اللوحة والشهادة عند النجاح، وبجانب اللوحة عند عدم النجاح. */
+  aliSpot(passed = true) {
+    return passed ? this.w(0.6, 0.45, 3.6) : this.w(4.4, 0.45, 2.6);
   }
 
   build() {

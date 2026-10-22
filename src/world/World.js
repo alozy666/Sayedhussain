@@ -129,7 +129,7 @@ export class World {
 
   buildTerrain() {
     const size = 152;
-    const seg = 210;
+    const seg = 168;
     const geo = new THREE.PlaneGeometry(size, size, seg, seg);
     geo.rotateX(-Math.PI / 2);
     const pos = geo.attributes.position;
@@ -294,12 +294,12 @@ export class World {
 
     const leafMat = vcMat();
     const palmMat = vcMat({ side: THREE.DoubleSide });
-    for (let v = 0; v < 3; v++) scatter(roundTreeGeometry(v), leafMat, 26, { minS: 0.85, maxS: 1.35, margin: 1 });
+    for (let v = 0; v < 3; v++) scatter(roundTreeGeometry(v), leafMat, 20, { minS: 0.85, maxS: 1.35, margin: 1 });
     scatter(roundTreeGeometry(0), leafMat, 14, { minS: 1.1, maxS: 1.5, filter: (x, z, r) => r < 15 });
     for (let v = 0; v < 2; v++) scatter(palmTreeGeometry(v), palmMat, 16, { minS: 0.9, maxS: 1.25, margin: 1, filter: (x, z, r) => r > 22 });
     scatter(pineTreeGeometry(), leafMat, 16, { minS: 0.9, maxS: 1.4, margin: 1 });
     for (let v = 0; v < 2; v++) scatter(bushGeometry(v), leafMat, 40, { minS: 0.7, maxS: 1.2 });
-    scatter(grassTuftGeometry(), leafMat, 520, { minS: 0.7, maxS: 1.4, tries: 8, margin: -2.5, shadow: false });
+    scatter(grassTuftGeometry(), leafMat, 400, { minS: 0.7, maxS: 1.4, tries: 8, margin: -2.5, shadow: false });
 
     // الأزهار بألوان باستيلية
     const flowers = scatter(flowerGeometry(), leafMat, 300, { minS: 0.8, maxS: 1.3, tries: 8, margin: -2.2, shadow: false });

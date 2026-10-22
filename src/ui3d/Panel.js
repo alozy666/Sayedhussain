@@ -38,7 +38,7 @@ export class Board extends THREE.Group {
 
     this.frameMat = mat(frameColor, { roughness: 0.6 }).clone();
     this.frame = new THREE.Mesh(
-      new RoundedBoxGeometry(width + border * 2, height + border * 2, depth, 5, radius + border * 0.6),
+      new RoundedBoxGeometry(width + border * 2, height + border * 2, depth, 3, radius + border * 0.6),
       this.frameMat
     );
     this.frame.castShadow = true;

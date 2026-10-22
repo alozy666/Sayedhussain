@@ -75,7 +75,7 @@ try {
     await waitIdle();
     await shot(`02-station-${i + 1}-intro`);
     let s = await state();
-    check(`المحطة ${i + 1}: زر «التالي» معطل قبل المشاهدة`, await page.locator('#hud-primary').isDisabled());
+    check(`المحطة ${i + 1}: الزر الرئيسي يدعو للمشاهدة أولًا`, (await page.locator('#hud-primary').textContent()).includes('شاهد'));
     await click3D(`st-${id}-watch`);
     await waitFor(() => window.__ali.state().stationPlaying);
     check(`المحطة ${i + 1}: تبدأ الظاهرة عند الضغط على زر المشاهدة`, true);
@@ -213,6 +213,17 @@ try {
   await page.reload();
   await waitFor(() => window.__ali && document.getElementById('loading').classList.contains('hidden'), null, 180000);
   check('يُحفظ تقدم الطالب بعد تحديث الصفحة', (await page.locator('#btn-start span').textContent()).includes('تابع'));
+  await page.click('#btn-start');
+  await waitFor(() => window.__ali.state().location.type === 'station' && !window.__ali.state().busy);
+  s = await state();
+  check('«تابع المغامرة» يعيد الطالب إلى آخر موقع', s.location.index === 2 && s.progress.stationsDone.every(Boolean));
+  await page.click('.step[data-key="welcome"]');
+  await waitFor(() => window.__ali.state().location.type === 'welcome' && !window.__ali.state().busy);
+  await page.click('#btn-new');
+  await waitFor(() => window.__ali.state().location.type === 'station' && !window.__ali.state().busy);
+  s = await state();
+  check('«مغامرة جديدة» تبدأ من المحطة الأولى وتصفّر التقدم', s.location.index === 0 && s.progress.stationsDone.every((d) => !d));
+  check('المحطات التالية مقفلة في المغامرة الجديدة', await page.locator('.step[data-key="station:1"].locked').count() === 1);
 
   check('لا توجد أخطاء في وحدة التحكم', consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
 } catch (e) {

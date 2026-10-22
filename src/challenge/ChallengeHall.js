@@ -34,7 +34,7 @@ export class ChallengeHall {
   }
 
   hallView() {
-    return { pos: this.w(0, 5.2, 10.4), target: this.w(0, 3.4, -2.4), minDist: 6, maxDist: 14, azRange: 0.55, moveRadius: 2 };
+    return { pos: this.w(0, 5.6, 12.9), target: this.w(0, 3.3, -2.4), minDist: 6, maxDist: 16, azRange: 0.55, moveRadius: 2 };
   }
 
   aliGateSpot() {
@@ -42,7 +42,7 @@ export class ChallengeHall {
   }
 
   aliHallSpot() {
-    return this.w(7.2, 0.3, -3.2);
+    return this.w(7.5, 0.3, 0.4);
   }
 
   build() {
@@ -165,7 +165,7 @@ export class ChallengeHall {
       fontSize: 0.48,
       onClick: () => this.handlers.onNext(),
     });
-    this.nextBtn.position.set(0, 0.7, 0.9);
+    this.nextBtn.position.set(0, 0.75, 1.4);
     this.nextBtn.rotation.x = -0.35;
     this.nextBtn.hide(true);
     R.add(this.nextBtn);

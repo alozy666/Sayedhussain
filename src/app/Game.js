@@ -105,7 +105,7 @@ export class Game {
     if (loc.type === 'station') return this.stations[loc.index].aliSpot();
     if (loc.type === 'challengeGate') return this.hall.aliGateSpot();
     if (loc.type === 'challenge') return this.hall.aliHallSpot();
-    if (loc.type === 'results') return this.results.aliSpot();
+    if (loc.type === 'results') return this.results.aliSpot(this.progress.lastResult?.passed !== false);
     return new THREE.Vector3();
   }
 
@@ -253,9 +253,11 @@ export class Game {
 
   arrive(loc) {
     this.location = { ...loc };
-    if (loc.type !== 'challenge') this.progress.location = { type: loc.type, index: loc.index ?? 0 };
-    else this.progress.location = { type: 'challenge', index: 0 };
-    this.save();
+    // نقطة الاستئناف: آخر موقع داخل المغامرة (الصفحة الرئيسية لا تلغيها)
+    if (loc.type !== 'welcome') {
+      this.progress.location = { type: loc.type, index: loc.type === 'challenge' ? 0 : loc.index ?? 0 };
+      this.save();
+    }
     const view = this.viewFor(loc);
     this.world.setShadowFocus(view.target);
     if (!this.rig.busy) this.rig.view = { ...view };
@@ -624,18 +626,18 @@ export class Game {
     }
     this.score = r;
     this.cert = r.passed ? this.renderCertificate('') : null;
-    this.placeAli(this.results.aliSpot(), this.results.view().pos);
+    this.placeAli(this.results.aliSpot(r.passed), this.results.view().pos);
     this.results.show(r, this.cert);
     if (r.passed) {
       services.audio?.celebrate();
       this.ali.setPose('celebrate');
       this.say(STRINGS.aliPassLine, null, { side: 'center', maxWidthU: 3.4 });
-      this.hideBubbleLater(6);
+      this.hideBubbleLater(4.5);
       setTimeout(() => this.location.type === 'results' && this.ali.setPose('thumbsUp'), 4200);
     } else {
       this.posePulse('encourage', 3);
-      this.say(STRINGS.aliFailLine, null, { side: 'center', maxWidthU: 3.4 });
-      this.hideBubbleLater(7);
+      this.say(STRINGS.aliFailLine, null, { side: 'right', maxWidthU: 3.8 });
+      this.hideBubbleLater(6);
     }
   }
 
@@ -833,11 +835,15 @@ export class Game {
       const st = this.stations[loc.index];
       const done = this.progress.stationsDone[loc.index];
       const last = loc.index === STATION_COUNT - 1;
+      // قبل المشاهدة الأولى يصبح الزر الرئيسي «شاهد…» حتى تكون الخطوة التالية واضحة دائمًا
+      const watchFirst = !done && !st.played && st.phase === 'intro';
       this.hud.setActions({
         replay: { visible: true, enabled: !busy && st.played && !st.playing },
         map: { visible: true, enabled: !busy },
         reset: { visible: true, enabled: !busy },
-        primary: { visible: true, enabled: !busy && done && !st.playing, label: last ? STRINGS.toChallenge : STRINGS.next, icon: 'next' },
+        primary: watchFirst
+          ? { visible: true, enabled: !busy, label: st.def.watchLabel, icon: 'play' }
+          : { visible: true, enabled: !busy && done && !st.playing, label: last ? STRINGS.toChallenge : STRINGS.next, icon: 'next' },
       });
     } else if (loc.type === 'challengeGate') {
       this.hud.setActions({

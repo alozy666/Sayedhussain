@@ -259,7 +259,7 @@ export function cloudGeometry(seed = 1) {
     const n = 5 + Math.floor(rand() * 3);
     for (let i = 0; i < n; i++) {
       const r = 2.2 + rand() * 2.2;
-      const b = blobGeometry(r, { seed: seed * 9 + i, detail: 2, jitter: 0.06 });
+      const b = blobGeometry(r, { seed: seed * 9 + i, detail: 1, jitter: 0.06 });
       b.translate((i - n / 2) * 2.6 + rand(), rand() * 1.4, (rand() - 0.5) * 3);
       parts.push(mergeable(paintGradient(b, '#dfe9f2', '#ffffff', -2, 3)));
     }

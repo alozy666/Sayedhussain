@@ -196,14 +196,14 @@ export class Ali extends THREE.Group {
     this.headPivot.add(head);
     this.head = head;
 
-    const skull = new THREE.Mesh(new THREE.SphereGeometry(0.34, 40, 28), M.skin);
+    const skull = new THREE.Mesh(new THREE.SphereGeometry(0.34, 32, 22), M.skin);
     skull.scale.set(1, 0.98, 0.95);
     skull.castShadow = true;
     withOutline(skull);
     head.add(skull);
 
     // الشعر الأسود المرتب (يظهر تحت حافة الغترة)
-    const hair = new THREE.Mesh(new THREE.SphereGeometry(0.348, 40, 20, 0, Math.PI * 2, 0, Math.PI * 0.42), M.hair);
+    const hair = new THREE.Mesh(new THREE.SphereGeometry(0.348, 32, 12, 0, Math.PI * 2, 0, Math.PI * 0.42), M.hair);
     hair.scale.set(1, 0.98, 0.96);
     hair.rotation.x = 0.04;
     head.add(hair);

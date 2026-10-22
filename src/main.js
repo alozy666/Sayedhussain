@@ -40,7 +40,6 @@ import { PRACTICE } from './content/practice.js';
 import { STRINGS } from './content/strings.js';
 
 const params = new URLSearchParams(location.search);
-const debug = params.get('debug');
 
 // ------------------------------------------------------------ شاشة التحميل والأخطاء
 const loadingEl = document.getElementById('loading');
@@ -311,7 +310,11 @@ async function boot() {
   const timer = new THREE.Timer();
   const adaptive = new AdaptiveQuality(renderer);
   let elapsed = 0;
+  let frameNo = 0;
   renderer.setAnimationLoop(() => {
+    frameNo++;
+    // عند فتح نافذة فوق العالم نخفف الرسم لتوفير طاقة الأجهزة الضعيفة
+    if (!xr.presenting && document.body.classList.contains('modal-open') && frameNo % 4 !== 0) return;
     timer.update();
     const raw = Math.min(timer.getDelta(), 0.05);
     const dt = raw * services.timeScale;
@@ -358,11 +361,10 @@ window.addEventListener('unhandledrejection', (e) => {
   }
 });
 
-if (debug) {
-  import('./debug.js').then((m) => m.runDebug(debug));
-} else {
-  boot().catch((e) => {
-    console.error(e);
-    showError(e.step ? `تعذّر تحميل جزء من المغامرة: ${e.step.replace('…', '')}` : 'حدث خطأ أثناء تحميل المغامرة.', String(e.cause?.message || e.message || ''));
-  });
-}
+boot().catch((e) => {
+  console.error(e);
+  showError(
+    e.step ? `تعذّر تحميل جزء من المغامرة: ${e.step.replace('…', '')}` : 'حدث خطأ أثناء تحميل المغامرة.',
+    String(e.cause?.message || e.message || '')
+  );
+});

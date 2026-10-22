@@ -3,7 +3,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { PALETTE } from '../world/palette.js';
 import { uiMat } from '../world/materials.js';
 import { createCanvas, getCtx, canvasTexture, roundRect, drawText, drawIcon } from './textCanvas.js';
-import { onTick, animate } from '../engine/ticker.js';
+import { onTick, animate, wait } from '../engine/ticker.js';
 import { damp, ease } from '../engine/mathx.js';
 import { services } from '../engine/services.js';
 
@@ -44,7 +44,7 @@ export class AnswerCard extends THREE.Group {
     this.add(this.inner);
 
     this.frameMat = new THREE.MeshStandardMaterial({ color: FRAME.idle, roughness: 0.55 });
-    this.frame = new THREE.Mesh(new RoundedBoxGeometry(width + 0.26, height + 0.26, 0.24, 5, 0.32), this.frameMat);
+    this.frame = new THREE.Mesh(new RoundedBoxGeometry(width + 0.26, height + 0.26, 0.24, 3, 0.32), this.frameMat);
     this.frame.castShadow = true;
     this.inner.add(this.frame);
 
@@ -190,14 +190,17 @@ export class AnswerCard extends THREE.Group {
     this._anim?.cancel();
     this.visible = true;
     this.showScale = 0;
+    const token = (this._showToken = (this._showToken ?? 0) + 1);
     const run = () => {
+      if (token !== this._showToken || !this.visible) return;
       this._anim = animate(0.5, (p) => (this.showScale = ease.outBack(p)));
     };
-    if (delay) setTimeout(run, delay * 1000);
+    if (delay) wait(delay).then(run);
     else run();
   }
 
   hide() {
+    this._showToken = (this._showToken ?? 0) + 1;
     this._anim?.cancel();
     const from = this.showScale;
     this.interactive = false;
