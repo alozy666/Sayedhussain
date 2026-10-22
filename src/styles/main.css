@@ -1,0 +1,969 @@
+:root {
+  --sky: #9fd6f2;
+  --sky-deep: #5fb4e6;
+  --mint: #8fd9b6;
+  --mint-deep: #3fae86;
+  --cream: #fff8e8;
+  --cream-deep: #f2e4c4;
+  --sand: #efd7a6;
+  --orange: #ffad5c;
+  --orange-deep: #ec8a3a;
+  --navy: #1f3b63;
+  --navy-soft: #3a5a86;
+  --green: #3db878;
+  --green-soft: #c7f0d8;
+  --grey: #b9c2cc;
+  --shadow: 0 10px 30px rgba(31, 59, 99, 0.18);
+  --radius: 22px;
+  --font: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
+  --ui-scale: clamp(0.82, calc(100vw / 1600px), 1.2);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--sky);
+  font-family: var(--font);
+  color: var(--navy);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: inherit;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.noscript {
+  padding: 40px;
+  font-size: 22px;
+  text-align: center;
+}
+
+#app,
+#stage {
+  position: fixed;
+  inset: 0;
+}
+
+#stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  touch-action: none;
+}
+
+/* ------------------------------------------------ أزرار عامة */
+.btn {
+  --bg: #ffffff;
+  --fg: var(--navy);
+  --edge: #d7e4ee;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: calc(19px * var(--ui-scale));
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--edge), 0 8px 18px rgba(31, 59, 99, 0.16);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--edge), 0 4px 10px rgba(31, 59, 99, 0.16);
+}
+
+.btn:focus-visible {
+  outline: 4px solid var(--sky-deep);
+  outline-offset: 3px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: grayscale(0.6);
+}
+
+.btn svg {
+  width: 1.3em;
+  height: 1.3em;
+  flex: none;
+}
+
+.btn-primary {
+  --bg: var(--orange);
+  --fg: #ffffff;
+  --edge: var(--orange-deep);
+}
+
+.btn-mint {
+  --bg: var(--mint);
+  --fg: var(--navy);
+  --edge: var(--mint-deep);
+}
+
+.btn-big {
+  min-height: 66px;
+  padding: 10px 34px;
+  font-size: calc(23px * var(--ui-scale));
+}
+
+.btn-icon {
+  width: 52px;
+  height: 52px;
+  min-height: 52px;
+  padding: 0;
+}
+
+.btn-icon.small {
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  opacity: 0.75;
+}
+
+/* ------------------------------------------------ التحميل والخطأ */
+#loading,
+#error-screen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.7), transparent 45%),
+    linear-gradient(180deg, #9fd6f2 0%, #dff3fb 65%, #f4e7c8 100%);
+  z-index: 50;
+  transition: opacity 0.6s ease;
+  padding: 16px;
+}
+
+#loading.fade {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-card {
+  width: min(520px, 100%);
+  padding: 34px 30px 30px;
+  border-radius: 32px;
+  background: var(--cream);
+  border: 6px solid var(--mint);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.loading-card h1 {
+  margin: 8px 0 0;
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.loading-sub {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: var(--mint-deep);
+  font-weight: 700;
+}
+
+.loading-globe svg {
+  width: 120px;
+  height: 120px;
+  animation: spin 9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.loading-bar {
+  height: 18px;
+  border-radius: 999px;
+  background: #e8eef3;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.loading-bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--mint), var(--orange));
+  transition: width 0.3s ease;
+  margin-inline-start: auto;
+}
+
+#loading-text {
+  margin: 14px 0 0;
+  font-size: 18px;
+  color: var(--navy-soft);
+  font-weight: 600;
+}
+
+.error-detail {
+  font-size: 14px;
+  color: #8a6a55;
+  direction: ltr;
+  word-break: break-word;
+}
+
+#error-text {
+  font-size: 20px;
+  line-height: 1.7;
+}
+
+/* ------------------------------------------------ واجهة اللعب */
+#hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#hud > * {
+  pointer-events: auto;
+}
+
+.hud-top {
+  position: absolute;
+  top: 14px;
+  inset-inline: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.hud-top > * {
+  pointer-events: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 10px;
+  border-radius: 999px;
+  background: rgba(255, 248, 232, 0.92);
+  box-shadow: var(--shadow);
+  font-weight: 800;
+  font-size: calc(18px * var(--ui-scale));
+  white-space: nowrap;
+}
+
+.brand .logo {
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+
+.hud-tools {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.stepper-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 248, 232, 0.94);
+  box-shadow: var(--shadow);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.stepper::-webkit-scrollbar {
+  display: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: calc(74px * var(--ui-scale));
+  padding: 2px 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--navy);
+  font-size: calc(14px * var(--ui-scale));
+  font-weight: 700;
+  border-radius: 16px;
+}
+
+.step:focus-visible {
+  outline: 3px solid var(--sky-deep);
+}
+
+.step .dot {
+  display: grid;
+  place-items: center;
+  width: calc(38px * var(--ui-scale));
+  height: calc(38px * var(--ui-scale));
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid var(--mint);
+  font-size: calc(17px * var(--ui-scale));
+  font-weight: 800;
+  transition: transform 0.2s ease;
+}
+
+.step .dot svg {
+  width: 60%;
+  height: 60%;
+}
+
+.step.done .dot {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.step.current .dot {
+  background: var(--orange);
+  border-color: var(--orange-deep);
+  color: #fff;
+  transform: scale(1.14);
+  box-shadow: 0 0 0 5px rgba(255, 173, 92, 0.3);
+}
+
+.step.locked {
+  cursor: not-allowed;
+  color: #94a1b0;
+}
+
+.step.locked .dot {
+  background: #eef1f4;
+  border-color: var(--grey);
+  color: #94a1b0;
+}
+
+.step-link {
+  width: calc(18px * var(--ui-scale));
+  height: 4px;
+  border-radius: 2px;
+  background: var(--grey);
+  margin-bottom: 18px;
+  flex: none;
+}
+
+.step-link.done {
+  background: var(--green);
+}
+
+.chip {
+  padding: 4px 18px;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 800;
+  font-size: calc(16px * var(--ui-scale));
+  box-shadow: var(--shadow);
+}
+
+.hud-bottom {
+  position: absolute;
+  bottom: 18px;
+  inset-inline: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+
+.hud-bottom > * {
+  pointer-events: auto;
+}
+
+.listen-btn {
+  position: absolute;
+  bottom: 96px;
+  inset-inline-start: 18px;
+}
+
+/* ------------------------------------------------ قائمة الترحيب */
+.welcome-menu {
+  position: absolute;
+  bottom: clamp(18px, 4vh, 44px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: rgba(255, 248, 232, 0.82);
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow);
+}
+
+.welcome-menu .secondary-row {
+  display: flex;
+  gap: 10px;
+}
+
+.welcome-link {
+  border: none;
+  background: none;
+  color: var(--navy-soft);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* بطاقة كلام علي في الصفحة الرئيسية */
+.welcome-speech {
+  position: absolute;
+  top: clamp(110px, 20vh, 220px);
+  inset-inline-start: clamp(16px, 4vw, 80px);
+  width: min(560px, 36vw);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px 20px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 5px solid var(--mint);
+  box-shadow: var(--shadow);
+  animation: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.welcome-speech::after {
+  content: '';
+  position: absolute;
+  bottom: 40px;
+  inset-inline-end: -26px;
+  border: 14px solid transparent;
+  border-inline-start-color: var(--mint);
+}
+
+.welcome-speech .speaker {
+  width: 92px;
+  height: 110px;
+  object-fit: contain;
+  flex: none;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #e3f4fb, #cdeefa);
+}
+
+.welcome-speech p {
+  margin: 0 0 10px;
+  white-space: pre-line;
+  font-size: calc(21px * var(--ui-scale));
+  font-weight: 700;
+  line-height: 1.75;
+  color: var(--navy);
+}
+
+@media (max-width: 900px) {
+  .welcome-speech {
+    top: 12px;
+    inset-inline: 16px;
+    width: auto;
+  }
+  .welcome-speech::after {
+    display: none;
+  }
+  .welcome-speech .speaker {
+    width: 64px;
+    height: 78px;
+  }
+}
+
+/* ------------------------------------------------ النوافذ */
+body.modal-open #hud {
+  filter: blur(1px);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(31, 59, 99, 0.35);
+  backdrop-filter: blur(3px);
+  z-index: 30;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+.modal-card {
+  position: relative;
+  width: min(860px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 26px 30px 28px;
+  border-radius: 30px;
+  background: var(--cream);
+  border: 6px solid var(--mint);
+  box-shadow: var(--shadow);
+  animation: pop 0.28s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+}
+
+.modal-card h2 {
+  margin: 0 0 14px;
+  font-size: calc(28px * var(--ui-scale));
+  font-weight: 800;
+  text-align: center;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  inset-inline-end: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+/* تعليمات اللعب */
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.help-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 10px;
+  border-radius: 20px;
+  background: #ffffff;
+  text-align: center;
+  font-weight: 700;
+  font-size: 17px;
+  box-shadow: 0 4px 0 #e6edf2;
+}
+
+.help-item svg {
+  width: 84px;
+  height: 84px;
+}
+
+.help-item small {
+  font-weight: 600;
+  color: var(--navy-soft);
+  font-size: 14px;
+}
+
+.help-steps {
+  margin: 18px 0 0;
+  padding: 14px 18px;
+  border-radius: 20px;
+  background: var(--green-soft);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 2;
+  list-style-position: inside;
+}
+
+/* الخريطة */
+.map-wrap {
+  position: relative;
+  width: min(620px, 100%);
+  margin: 0 auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.7), var(--shadow);
+  background: #7ccbe4;
+}
+
+.map-wrap img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.map-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--navy);
+}
+
+.map-marker .pin {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid var(--mint);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  font-size: 18px;
+}
+
+.map-marker .label {
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: rgba(255, 248, 232, 0.95);
+  white-space: nowrap;
+}
+
+.map-marker.done .pin {
+  background: var(--green);
+  border-color: #fff;
+  color: #fff;
+}
+
+.map-marker.current .pin {
+  background: var(--orange);
+  border-color: #fff;
+  color: #fff;
+  box-shadow: 0 0 0 6px rgba(255, 173, 92, 0.45);
+}
+
+.map-marker.locked {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.map-marker.locked .pin {
+  background: #eef1f4;
+  border-color: var(--grey);
+  color: #94a1b0;
+}
+
+.map-marker svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* الشهادة */
+.cert-preview {
+  width: 100%;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 16px auto 0;
+  max-width: 420px;
+  font-weight: 700;
+}
+
+.field input {
+  font-family: inherit;
+  font-size: 20px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 3px solid var(--mint);
+  background: #fff;
+  color: var(--navy);
+}
+
+.field small {
+  color: var(--navy-soft);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------ لوحة المعلم */
+.teacher-card {
+  width: min(1060px, 100%);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat {
+  padding: 14px;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 4px 0 #e6edf2;
+}
+
+.stat b {
+  display: block;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.stat span {
+  font-size: 15px;
+  color: var(--navy-soft);
+  font-weight: 700;
+}
+
+.stat.ok b {
+  color: var(--green);
+}
+
+.stat.no b {
+  color: var(--orange-deep);
+}
+
+.teacher-section h3 {
+  margin: 18px 0 8px;
+  font-size: 20px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  font-size: 15px;
+}
+
+table.data th,
+table.data td {
+  padding: 9px 10px;
+  text-align: center;
+  border-bottom: 1px solid #edf1f4;
+}
+
+table.data th {
+  background: var(--navy);
+  color: #fff;
+  font-weight: 700;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.tag.ok {
+  background: var(--green-soft);
+  color: #1d7a4b;
+}
+
+.tag.no {
+  background: #fde6cf;
+  color: #a65a16;
+}
+
+.empty {
+  padding: 22px;
+  text-align: center;
+  border-radius: 18px;
+  background: #fff;
+  font-weight: 700;
+  color: var(--navy-soft);
+}
+
+.note {
+  font-size: 14px;
+  color: var(--navy-soft);
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ------------------------------------------------ التنبيهات */
+#toasts {
+  position: fixed;
+  top: 158px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  z-index: 40;
+  pointer-events: none;
+  width: min(640px, calc(100% - 32px));
+}
+
+.toast {
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-weight: 700;
+  font-size: 17px;
+  box-shadow: var(--shadow);
+  animation:
+    pop 0.25s ease,
+    fadeOut 0.4s ease 3.6s forwards;
+  text-align: center;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* ------------------------------------------------ الشاشات الصغيرة والأجهزة اللوحية */
+@media (max-width: 1100px) {
+  .brand .brand-text {
+    display: none;
+  }
+  .brand {
+    padding: 6px;
+  }
+  .step span.name {
+    display: none;
+  }
+  .step {
+    min-width: 46px;
+  }
+  .step-link {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .hud-top {
+    flex-wrap: wrap;
+  }
+  .stepper-wrap {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .btn {
+    min-height: 46px;
+    padding: 6px 16px;
+    font-size: 16px;
+  }
+  .btn-big {
+    min-height: 54px;
+    font-size: 18px;
+  }
+  .btn-icon {
+    width: 46px;
+    height: 46px;
+    min-height: 46px;
+  }
+  .welcome-menu {
+    border-radius: 28px;
+  }
+  .modal-card {
+    padding: 20px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------ الطباعة (نتيجة المعلم) */
+@media print {
+  body {
+    background: #fff;
+    overflow: visible;
+  }
+  #app > *:not(#modals),
+  #loading,
+  #error-screen,
+  #toasts {
+    display: none !important;
+  }
+  .modal {
+    position: static;
+    background: none;
+    backdrop-filter: none;
+    padding: 0;
+  }
+  .modal-card {
+    border: none;
+    box-shadow: none;
+    max-height: none;
+    overflow: visible;
+    width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

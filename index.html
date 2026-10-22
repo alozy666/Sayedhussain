@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="مغامرة المستكشف علي في عالم الأرض المتغيرة — موقع تعليمي ثلاثي الأبعاد لدرس «الأرض تتغير» للصف الثالث الابتدائي." />
+    <meta name="theme-color" content="#9fd6f2" />
+    <title>مغامرة المستكشف علي</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%237ccbe4'/%3E%3Cpath d='M10 36c6-8 12-3 18-9s10-12 18-7 8 14 10 18c-6 14-34 20-46-2z' fill='%23a6dc8e'/%3E%3Cpath d='M38 22l6-10 6 10z' fill='%23c9b39a'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <noscript>
+      <div class="noscript">يحتاج هذا الموقع إلى تفعيل JavaScript في المتصفح.</div>
+    </noscript>
+
+    <div id="app">
+      <div id="stage"></div>
+      <div id="hud" class="hidden" aria-live="polite"></div>
+      <div id="modals"></div>
+      <div id="toasts" aria-live="assertive"></div>
+    </div>
+
+    <!-- شاشة التحميل -->
+    <div id="loading" role="status">
+      <div class="loading-card">
+        <div class="loading-globe" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="#7ccbe4" />
+            <path d="M18 66c10-14 22-6 32-16s16-22 30-13 14 24 18 31c-10 24-60 34-80-2z" fill="#a6dc8e" />
+            <path d="M64 40l9-16 9 16z" fill="#c9b39a" />
+            <path d="M70 30c2-4 4-6 3-10" stroke="#ff9f5a" stroke-width="4" fill="none" stroke-linecap="round" />
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#1f3b63" stroke-width="5" />
+          </svg>
+        </div>
+        <h1>مغامرة المستكشف علي</h1>
+        <p class="loading-sub">لنكتشف كيف تتغير الأرض!</p>
+        <div class="loading-bar"><span id="loading-fill"></span></div>
+        <p id="loading-text">جارٍ تجهيز عالم المغامرة…</p>
+      </div>
+    </div>
+
+    <!-- شاشة الخطأ -->
+    <div id="error-screen" class="hidden" role="alert">
+      <div class="loading-card">
+        <h1>عذرًا!</h1>
+        <p id="error-text">حدث خطأ أثناء تحميل المغامرة.</p>
+        <p id="error-detail" class="error-detail"></p>
+        <button id="error-retry" class="btn btn-primary" type="button">إعادة المحاولة</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

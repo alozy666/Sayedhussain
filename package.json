@@ -1,0 +1,25 @@
+{
+  "name": "ali-explorer-changing-earth",
+  "private": true,
+  "version": "1.0.0",
+  "description": "مغامرة المستكشف علي في عالم الأرض المتغيرة — موقع تعليمي ثلاثي الأبعاد لدرس «الأرض تتغير» (علوم الصف الثالث الابتدائي، مملكة البحرين)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:single": "vite build --mode single",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:e2e": "node tests/e2e/playthrough.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cairo": "5.3.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "playwright-core": "1.64.1",
+    "vite": "8.3.5",
+    "vite-plugin-singlefile": "2.3.4",
+    "vitest": "5.0.5"
+  }
+}
